@@ -1,223 +1,169 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { Leaf, Mountain, Droplets } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { Leaf, Mountain, Droplets, ChevronDown, ArrowRight } from 'lucide-react-native';
 
-const { width } = Dimensions.get('window');
-const CARD_WIDTH = width - 32;
-
-interface SummaryCardProps {
+type SummaryCardProps = {
   title: string;
-  status: 'poor' | 'moderate' | 'good';
+  status: 'good' | 'moderate' | 'poor';
   value: string;
-  icon: 'leaf' | 'mountain' | 'droplets';
+  icon: string;
   description: string;
   details: string[];
   onPress: () => void;
-}
+};
 
-export default function SummaryCard({ 
+export default function SummaryCard({
   title, 
   status, 
-  value, 
-  icon, 
-  description, 
+  value,
+  icon,
+  description,
   details,
-  onPress 
+  onPress
 }: SummaryCardProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'poor':
-        return '#D32F2F';
-      case 'moderate':
-        return '#F57C00';
-      case 'good':
-        return '#2E7D32';
-      default:
-        return '#757575';
-    }
-  };
+  const [expanded, setExpanded] = useState(false);
+  const [animation] = useState(new Animated.Value(0));
 
-  const getStatusBackground = (status: string) => {
-    switch (status) {
-      case 'poor':
-        return '#FFEBEE';
-      case 'moderate':
-        return '#FFF3E0';
-      case 'good':
-        return '#E8F5E9';
-      default:
-        return '#F5F5F5';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'poor':
-        return 'Needs Attention';
-      case 'moderate':
-        return 'Average';
-      case 'good':
-        return 'Optimal';
-      default:
-        return status;
-    }
-  };
-
-  const renderIcon = () => {
-    const size = 32;
-    const color = getStatusColor(status);
+  const toggleExpanded = () => {
+    const toValue = expanded ? 0 : 1;
     
-    switch (icon) {
-      case 'leaf':
-        return <Leaf size={size} color={color} />;
-      case 'mountain':
-        return <Mountain size={size} color={color} />;
-      case 'droplets':
-        return <Droplets size={size} color={color} />;
-      default:
-        return null;
+    Animated.timing(animation, {
+      toValue,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+    
+    setExpanded(!expanded);
+  };
+
+  const getStatusColor = () => {
+    switch (status) {
+      case 'good': return '#2E7D32';
+      case 'moderate': return '#F57C00';
+      case 'poor': return '#D32F2F';
+      default: return '#757575';
     }
   };
+
+  const getIcon = () => {
+    switch (icon) {
+      case 'leaf': return <Leaf size={24} color={getStatusColor()} />;
+      case 'mountain': return <Mountain size={24} color={getStatusColor()} />;
+      case 'droplets': return <Droplets size={24} color={getStatusColor()} />;
+      default: return <Leaf size={24} color={getStatusColor()} />;
+    }
+  };
+
+  const detailsHeight = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, details.length * 30 + 10]
+  });
+
+  const iconRotation = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg']
+  });
 
   return (
-    <TouchableOpacity 
-      style={[styles.card, { backgroundColor: getStatusBackground(status) }]}
-      onPress={onPress}
-    >
-      <View style={styles.topSection}>
-        <View style={[styles.iconContainer, { backgroundColor: `${getStatusColor(status)}15` }]}>
-          {renderIcon()}
+    <View style={styles.card}>
+      <TouchableOpacity style={styles.cardHeader} onPress={toggleExpanded}>
+        <View style={styles.iconContainer}>
+          {getIcon()}
         </View>
-        <View style={styles.headerContent}>
+        <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.description}>{description}</Text>
         </View>
-      </View>
-
-      <View style={styles.middleSection}>
         <View style={styles.valueContainer}>
-          <Text style={styles.valueLabel}>Current Reading</Text>
-          <Text style={[styles.value, { color: getStatusColor(status) }]}>{value}</Text>
+          <Text style={[styles.value, { color: getStatusColor() }]}>{value}</Text>
+          <Animated.View style={{ transform: [{ rotate: iconRotation }] }}>
+            <ChevronDown size={20} color="#757575" />
+          </Animated.View>
         </View>
-        <View style={[styles.statusContainer, { backgroundColor: `${getStatusColor(status)}15` }]}>
-          <Text style={[styles.statusValue, { color: getStatusColor(status) }]}>
-            {getStatusText(status)}
-          </Text>
-        </View>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.detailsSection}>
+      <Animated.View style={[styles.detailsContainer, { height: detailsHeight }]}>
         {details.map((detail, index) => (
-          <View key={index} style={styles.detailItem}>
-            <View style={[styles.detailDot, { backgroundColor: getStatusColor(status) }]} />
-            <Text style={styles.detailText}>{detail}</Text>
-          </View>
+          <Text key={index} style={styles.detailItem}>• {detail}</Text>
         ))}
-      </View>
-
-      <View style={[styles.footer, { backgroundColor: getStatusColor(status) }]}>
-        <Text style={styles.footerText}>View Detailed Analysis</Text>
-      </View>
-    </TouchableOpacity>
+        <TouchableOpacity style={styles.detailsButton} onPress={onPress}>
+          <Text style={styles.detailsButtonText}>View Details</Text>
+          <ArrowRight size={16} color="#2E7D32" />
+        </TouchableOpacity>
+      </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    width: CARD_WIDTH,
-    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     marginBottom: 16,
     overflow: 'hidden',
-    elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    elevation: 2,
   },
-  topSection: {
+  cardHeader: {
     flexDirection: 'row',
-    padding: 16,
     alignItems: 'center',
+    padding: 16,
   },
   iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
   },
-  headerContent: {
+  titleContainer: {
     flex: 1,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#212121',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#424242',
     marginBottom: 4,
   },
   description: {
-    fontSize: 14,
-    color: '#616161',
-    lineHeight: 20,
-  },
-  middleSection: {
-    flexDirection: 'row',
-    padding: 16,
-    paddingTop: 0,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  valueContainer: {
-    flex: 1,
-  },
-  valueLabel: {
     fontSize: 12,
     color: '#757575',
-    marginBottom: 4,
-    fontWeight: '500',
   },
-  value: {
-    fontSize: 24,
-    fontWeight: '700',
-  },
-  statusContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  statusValue: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  detailsSection: {
-    padding: 16,
-    paddingTop: 8,
-  },
-  detailItem: {
+  valueContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
+  },
+  value: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  detailsContainer: {
+    overflow: 'hidden',
+    paddingHorizontal: 16,
+  },
+  detailItem: {
+    fontSize: 14,
+    color: '#616161',
     marginBottom: 8,
+    paddingLeft: 8,
   },
-  detailDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginRight: 8,
-  },
-  detailText: {
-    fontSize: 14,
-    color: '#424242',
-    flex: 1,
-    lineHeight: 20,
-  },
-  footer: {
-    padding: 12,
+  detailsButton: {
+    marginTop: 8,
+    marginBottom: 16,
+    flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'flex-start',
   },
-  footerText: {
-    color: '#FFFFFF',
+  detailsButtonText: {
+    color: '#2E7D32',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
+    marginRight: 4,
   },
 });

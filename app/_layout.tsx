@@ -1,17 +1,16 @@
-import { useEffect } from 'react';
+// app/_layout.tsx
 import { Stack } from 'expo-router';
+import { SoilDataProvider } from '@/context/SoilDataContext';
 import { StatusBar } from 'expo-status-bar';
-import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 
 export default function RootLayout() {
-  useFrameworkReady();
-
   return (
-    <>
+    <SoilDataProvider>
       <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
-    </>
+    </SoilDataProvider>
   );
 }
