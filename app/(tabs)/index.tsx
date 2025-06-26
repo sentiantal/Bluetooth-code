@@ -7,7 +7,7 @@ import { Device } from 'react-native-ble-plx';
 
 const HomeScreen: React.FC = () => {
   const router = useRouter();
-  const { devices, isScanning, error, startScan, stopScan, connectToDevice } = useBluetooth();
+  const { devices, isScanning, error, startScan, stopScan, connectToDevice, handleDevicePress } = useBluetooth();
   const [spinAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const HomeScreen: React.FC = () => {
       const connectedDevice = await connectToDevice(device.id);
       if (connectedDevice) {
         router.push({
-          pathname: '/deviceDetails',
+          pathname: '../deviceDetails',
           params: { deviceId: '' },
         });
       }
@@ -105,7 +105,7 @@ const HomeScreen: React.FC = () => {
               data={devices}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => handleConnect(item)}>
+                <TouchableOpacity onPress={() => handleDevicePress(item)}>
                   <Text style={styles.deviceText}>{getDisplayName(item)}</Text>
                 </TouchableOpacity>
               )}

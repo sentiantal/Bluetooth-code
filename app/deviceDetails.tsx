@@ -1,71 +1,80 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Alert, Platform } from 'react-native';
 import { BleManager, Device } from 'react-native-ble-plx';
 import { useLocalSearchParams } from 'expo-router';
+import { useSoilData } from '@/context/SoilDataContext';
 
-const bleManager = new BleManager();
+// Initialize BleManager only if we're not on web platform
+const bleManager = Platform.OS !== 'web' ? new BleManager() : null;
 
 const DeviceDetails: React.FC = () => {
-  const { deviceId } = useLocalSearchParams<{ deviceId: string }>();
+  const { deviceId } = useLocalSearchParams();
+  const safeDeviceId = typeof deviceId === 'string' ? deviceId : '';
+
   const [device, setDevice] = useState<Device | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const { soilData } = useSoilData(); // ✅ soil predictions from context
+
   const connectAndFetchDeviceData = useCallback(async () => {
-    if (!deviceId) {
+    if (!safeDeviceId) {
       setError('No device ID provided.');
       setLoading(false);
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    // Check if BLE is available (not on web)
+    if (!bleManager) {
+      setError('Bluetooth functionality is not available on this platform.');
+      setLoading(false);
+      return;
+    }
 
     try {
-      // Check if already connected
-      const isConnected = await bleManager.isDeviceConnected(deviceId);
+      const isConnected = await bleManager.isDeviceConnected(safeDeviceId);
       let connectedDevice: Device;
 
       if (!isConnected) {
-        // Connect to the device
-        connectedDevice = await bleManager.connectToDevice(deviceId);
+        connectedDevice = await bleManager.connectToDevice(safeDeviceId);
       } else {
-        // Retrieve device if already connected
-        const devices = await bleManager.devices([deviceId]);
+        const devices = await bleManager.devices([safeDeviceId]);
         connectedDevice = devices[0];
-        if (!connectedDevice) {
-          throw new Error('Device not found.');
-        }
+        if (!connectedDevice) throw new Error('Device not found.');
       }
 
-      // Discover services and characteristics
       await connectedDevice.discoverAllServicesAndCharacteristics();
-      console.log('Services discovered for:', connectedDevice.name);
       setDevice(connectedDevice);
-    } catch (err: any) { // Use 'any' or 'unknown' and safely handle error
-      const errorMessage = err?.message || String(err) || 'Unknown error';
-      console.error('Error connecting to device:', err);
-      setError(`Failed to connect to device: ${errorMessage}`);
+    } catch (err: any) {
+      const errorMessage = err?.message || String(err);
+      setError(`Failed to connect: ${errorMessage}`);
+      console.error('❌ Error:', errorMessage);
     } finally {
       setLoading(false);
     }
-  }, [deviceId]);
+  }, [safeDeviceId]);
+
+  useEffect(() => {
+    console.log('🧪 soilData received in DeviceDetails:', soilData); // ✅ Print here
+  }, [soilData]);
+
 
   useEffect(() => {
     connectAndFetchDeviceData();
 
     return () => {
-      if (device && deviceId) {
-        bleManager.cancelDeviceConnection(deviceId).catch((err) => {
-          console.error('Error disconnecting device:', err);
+      if (device && bleManager) {
+        bleManager.cancelDeviceConnection(device.id).catch((err) => {
+          console.error('⚠️ Disconnect error:', err);
         });
       }
     };
-  }, [deviceId, connectAndFetchDeviceData, device]);
+  }, [connectAndFetchDeviceData]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Device Details</Text>
+
       {loading ? (
         <ActivityIndicator size="large" color="#4CAF50" />
       ) : error ? (
@@ -75,42 +84,91 @@ const DeviceDetails: React.FC = () => {
           <Text style={styles.deviceText}>
             Connected to: {device.name || 'Unknown Device'}
           </Text>
-          <Text style={styles.deviceText}>ID: {deviceId}</Text>
         </View>
       ) : (
         <Text style={styles.errorText}>No device data available.</Text>
       )}
-    </View>
+
+      <Text style={styles.subtitle}>Soil Predictions</Text>
+
+      {soilData.length === 0 ? (
+        <Text style={styles.deviceText}>Waiting for predictions...</Text>
+      ) : (
+        soilData.map((item, index) => (
+          <View key={index} style={styles.resultCard}>
+            <Text style={styles.label}>{item.label}</Text>
+            <Text style={styles.value}>
+              {item.value} {item.unit}
+            </Text>
+            <Text style={styles.range}>
+              Recommended: {item.goodRangeMin} – {item.goodRangeMax}
+            </Text>
+          </View>
+        ))
+      )}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 20,
     backgroundColor: '#f5f5f5',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 15,
     color: '#333',
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 25,
+    marginBottom: 10,
+    color: '#4CAF50',
+    textAlign: 'center',
   },
   deviceInfo: {
     alignItems: 'center',
+    marginBottom: 20,
   },
   deviceText: {
-    fontSize: 18,
-    marginVertical: 5,
-    color: '#4CAF50',
+    fontSize: 16,
+    marginVertical: 3,
+    color: '#333',
+    textAlign: 'center',
   },
   errorText: {
     fontSize: 16,
     color: 'red',
     textAlign: 'center',
     marginVertical: 10,
+  },
+  resultCard: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+  value: {
+    fontSize: 16,
+    color: '#4CAF50',
+  },
+  range: {
+    fontSize: 14,
+    color: '#888',
   },
 });
 
