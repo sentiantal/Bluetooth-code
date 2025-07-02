@@ -4,22 +4,28 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { useSoilData } from '@/context/SoilDataContext';
 import { Leaf, ChevronLeft, Info } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { TranslatedText } from '@/components/TranslatedText';
+import { useTranslatedText } from '@/hooks/useTranslatedText';
 
 export default function NutrientsScreen() {
   const router = useRouter();
   const { soilData } = useSoilData();
+  const error = useTranslatedText('error')
+  const low = useTranslatedText('low')
+  const moderate = useTranslatedText('moderate')
+  const good = useTranslatedText('good')
   if (!soilData || soilData.length === 0) {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Loading soil data...</Text>
+      <Text><TranslatedText text="Loading soil data..." /></Text>
     </View>
   );
 }
   const getStatus = (value: number, min: number, max: number): string => {
-    if (isNaN(value)) return 'error';
-    if (value < min) return 'low';
-    if (value > max) return 'moderate'; // can also return 'high' if you want
-    return 'good';
+    if (isNaN(value)) return error;
+    if (value < min) return low;
+    if (value > max) return moderate; // can also return 'high' if you want
+    return good;
   };
   const nutrientDetails = {
     ph: {
@@ -99,10 +105,10 @@ export default function NutrientsScreen() {
 
   const getStatusColor = (status: string): string => {
     switch (status) {
-      case 'good': return '#2E7D32';
-      case 'moderate': return '#F57C00';
-      case 'low': return '#D32F2F';
-      case 'error': return '#BDBDBD'; // gray for error/missing data
+      case good: return '#2E7D32';
+      case moderate: return '#F57C00';
+      case low: return '#D32F2F';
+      case error: return '#BDBDBD'; // gray for error/missing data
       default: return '#757575';
     }
   };
@@ -119,8 +125,8 @@ export default function NutrientsScreen() {
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <Leaf size={32} color="#FFFFFF" />
-          <Text style={styles.headerTitle}>Nutrients</Text>
-          <Text style={styles.headerSubtitle}>Essential elements for plant growth</Text>
+          <Text style= {styles.headerTitle}><TranslatedText text="Nutrients" /></Text>
+          <Text style={styles.headerSubtitle}><TranslatedText text="Essential elements for plant growth"/></Text>
         </View>
       </View>
 
@@ -130,13 +136,13 @@ export default function NutrientsScreen() {
             <Info size={20} color="#1976D2" />
           </View>
           <Text style={styles.infoText}>
-            Soil nutrients are vital for plant growth. Maintaining proper
-            nutrient levels ensures healthy crop development and maximum yield.
+            <TranslatedText text="Soil nutrients are vital for plant growth. Maintaining proper
+            nutrient levels ensures healthy crop development and maximum yield."/>
           </Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>pH Level</Text>
+          <Text style={styles.sectionTitle}><TranslatedText text="pH Level" /></Text>
           <View style={styles.phContainer}>
             <View style={styles.phScaleContainer}>
               <View style={styles.phScale}>
@@ -164,26 +170,26 @@ export default function NutrientsScreen() {
             </View>
             <View style={styles.phDetails}>
               <Text style={styles.phValue}>
-                Current: <Text style={{ color: getStatusColor(nutrientDetails.ph.status) }}>
+                <TranslatedText text="Current: " /><Text style={{ color: getStatusColor(nutrientDetails.ph.status) }}>
                   {nutrientDetails.ph.value}
                 </Text>
               </Text>
               <Text style={styles.phOptimal}>
-                Optimal: {nutrientDetails.ph.optimal}
+                <TranslatedText text="Optimal: " />{nutrientDetails.ph.optimal}
               </Text>
             </View>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Macronutrients</Text>
+          <Text style={styles.sectionTitle}><TranslatedText text="Macronutrients"/></Text>
           <Text style={styles.sectionDescription}>
-            Essential nutrients required in large amounts
+            <TranslatedText text="Essential nutrients required in large amounts"/>
           </Text>
           {nutrientDetails.macronutrients.map((nutrient, index) => (
             <View key={index} style={styles.nutrientCard}>
               <View style={styles.nutrientHeader}>
-                <Text style={styles.nutrientName}>{nutrient.name}</Text>
+                <Text style={styles.nutrientName}><TranslatedText text={nutrient.name}/></Text>
                 <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(nutrient.status)}20` }]}>
                   <Text style={[styles.statusText, { color: getStatusColor(nutrient.status) }]}>
                     {nutrient.status.charAt(0).toUpperCase() + nutrient.status.slice(1)}
@@ -192,15 +198,15 @@ export default function NutrientsScreen() {
               </View>
               <View style={styles.nutrientDetails}>
                 <View style={styles.valueContainer}>
-                  <Text style={styles.valueLabel}>Current</Text>
+                  <Text style={styles.valueLabel}><TranslatedText text="Current"/></Text>
                   <Text style={[styles.value, { color: getStatusColor(nutrient.status) }]}>
                     {nutrient.value}
                   </Text>
                 </View>
                 <View style={styles.divider} />
                 <View style={styles.valueContainer}>
-                  <Text style={styles.valueLabel}>Optimal</Text>
-                  <Text style={styles.value}>{nutrient.optimal}</Text>
+                  <Text style={styles.valueLabel}><TranslatedText text="Optimal"/></Text>
+                  <Text style={styles.value}><TranslatedText text={nutrient.optimal}/></Text>
                 </View>
               </View>
             </View>
@@ -208,14 +214,14 @@ export default function NutrientsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Micronutrients</Text>
+          <Text style={styles.sectionTitle}><TranslatedText text="Micronutrients"/></Text>
           <Text style={styles.sectionDescription}>
-            Essential nutrients required in small amounts
+            <TranslatedText text="Essential nutrients required in small amounts"/>
           </Text>
           {nutrientDetails.micronutrients.map((nutrient, index) => (
             <View key={index} style={styles.nutrientCard}>
               <View style={styles.nutrientHeader}>
-                <Text style={styles.nutrientName}>{nutrient.name}</Text>
+                <Text style={styles.nutrientName}><TranslatedText text={nutrient.name}/></Text>
                 <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(nutrient.status)}20` }]}>
                   <Text style={[styles.statusText, { color: getStatusColor(nutrient.status) }]}>
                     {nutrient.status.charAt(0).toUpperCase() + nutrient.status.slice(1)}
@@ -224,15 +230,15 @@ export default function NutrientsScreen() {
               </View>
               <View style={styles.nutrientDetails}>
                 <View style={styles.valueContainer}>
-                  <Text style={styles.valueLabel}>Current</Text>
+                  <Text style={styles.valueLabel}><TranslatedText text="Current"/></Text>
                   <Text style={[styles.value, { color: getStatusColor(nutrient.status) }]}>
                     {nutrient.value}
                   </Text>
                 </View>
                 <View style={styles.divider} />
                 <View style={styles.valueContainer}>
-                  <Text style={styles.valueLabel}>Optimal</Text>
-                  <Text style={styles.value}>{nutrient.optimal}</Text>
+                  <Text style={styles.valueLabel}><TranslatedText text="Optimal"/></Text>
+                  <Text style={styles.value}><TranslatedText text={nutrient.optimal}/></Text>
                 </View>
               </View>
             </View>
@@ -240,23 +246,23 @@ export default function NutrientsScreen() {
         </View>
 
         <View style={styles.recommendationsSection}>
-          <Text style={styles.sectionTitle}>Recommendations</Text>
+          <Text style={styles.sectionTitle}><TranslatedText text="Recommendations"/></Text>
           <View style={styles.recommendationCard}>
-            <Text style={styles.recommendationTitle}>Address Nitrogen Deficiency</Text>
+            <Text style={styles.recommendationTitle}><TranslatedText text="Address Nitrogen Deficiency"/></Text>
             <Text style={styles.recommendationText}>
-              Apply nitrogen-rich fertilizer such as urea (46-0-0) at a rate of 1-2 pounds per 1000 square feet.
+              <TranslatedText text="Apply nitrogen-rich fertilizer such as urea (46-0-0) at a rate of 1-2 pounds per 1000 square feet."/>
             </Text>
           </View>
           <View style={styles.recommendationCard}>
-            <Text style={styles.recommendationTitle}>Improve Zinc Levels</Text>
+            <Text style={styles.recommendationTitle}><TranslatedText text="Improve Zinc Levels"/></Text>
             <Text style={styles.recommendationText}>
-              Apply zinc sulfate at 1-2 pounds per acre to correct zinc deficiency.
+              <TranslatedText text="Apply zinc sulfate at 1-2 pounds per acre to correct zinc deficiency."/>
             </Text>
           </View>
           <View style={styles.recommendationCard}>
-            <Text style={styles.recommendationTitle}>Maintain pH Level</Text>
+            <Text style={styles.recommendationTitle}><TranslatedText text="Maintain pH Level"/></Text>
             <Text style={styles.recommendationText}>
-              Your soil pH is within optimal range. Continue monitoring but no adjustment needed at this time.
+              <TranslatedText text="Your soil pH is within optimal range. Continue monitoring but no adjustment needed at this time."/>
             </Text>
           </View>
         </View>

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { useSoilData } from '@/context/SoilDataContext';
 import { Mountain, ChevronLeft, Info } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { TranslatedText } from '@/components/TranslatedText';
 
 export default function TextureScreen() {
   const router = useRouter();
@@ -54,8 +55,8 @@ export default function TextureScreen() {
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <Mountain size={32} color="#FFFFFF" />
-          <Text style={styles.headerTitle}>Soil Texture</Text>
-          <Text style={styles.headerSubtitle}>Composition and structure of your soil</Text>
+          <Text style={styles.headerTitle}><TranslatedText text="Soil Texture"/></Text>
+          <Text style={styles.headerSubtitle}><TranslatedText text="Composition and structure of your soil"/></Text>
         </View>
       </View>
 
@@ -65,15 +66,15 @@ export default function TextureScreen() {
             <Info size={20} color="#1976D2" />
           </View>
           <Text style={styles.infoText}>
-            Soil texture affects water retention, drainage, aeration, and nutrient availability. 
-            It's determined by the proportion of sand, silt, and clay particles.
+            <TranslatedText text="Soil texture affects water retention, drainage, aeration, and nutrient availability. 
+            It's determined by the proportion of sand, silt, and clay particles."/>
           </Text>
         </View>
 
         
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Soil Composition</Text>
+          <Text style={styles.sectionTitle}><TranslatedText text="Soil Composition"/></Text>
           <View style={styles.compositionCard}>
             <View style={styles.compositionChart}>
               <View style={styles.compositionBar}>
@@ -99,15 +100,15 @@ export default function TextureScreen() {
               <View style={styles.legendContainer}>
                 <View style={styles.legendItem}>
                   <View style={[styles.legendColor, { backgroundColor: '#F9A825' }]} />
-                  <Text style={styles.legendText}>Sand: {textureDetails.composition.sand}%</Text>
+                  <Text style={styles.legendText}><TranslatedText text="Sand: "/>{textureDetails.composition.sand}%</Text>
                 </View>
                 <View style={styles.legendItem}>
                   <View style={[styles.legendColor, { backgroundColor: '#8D6E63' }]} />
-                  <Text style={styles.legendText}>Silt: {textureDetails.composition.silt}%</Text>
+                  <Text style={styles.legendText}><TranslatedText text="Silt: "/>{textureDetails.composition.silt}%</Text>
                 </View>
                 <View style={styles.legendItem}>
                   <View style={[styles.legendColor, { backgroundColor: '#B71C1C' }]} />
-                  <Text style={styles.legendText}>Clay: {textureDetails.composition.clay}%</Text>
+                  <Text style={styles.legendText}><TranslatedText text="Clay: "/>{textureDetails.composition.clay}%</Text>
                 </View>
               </View>
             </View>
@@ -115,43 +116,43 @@ export default function TextureScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Soil Properties</Text>
+          <Text style={styles.sectionTitle}><TranslatedText text="Soil Properties"/></Text>
           <Text style={styles.sectionDescription}>
-            Physical characteristics that affect plant growth
+            <TranslatedText text="Physical characteristics that affect plant growth"/>
           </Text>
           {textureDetails.properties.map((property, index) => (
             <View key={index} style={styles.propertyCard}>
               <View style={styles.propertyHeader}>
-                <Text style={styles.propertyName}>{property.name}</Text>
+                <Text style={styles.propertyName}><TranslatedText text={property.name}/></Text>
                 <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(property.value)}20` }]}>
                   <Text style={[styles.statusText, { color: getStatusColor(property.value) }]}>
-                    {property.value}
+                    <TranslatedText text={property.value}/>
                   </Text>
                 </View>
               </View>
-              <Text style={styles.propertyDescription}>{property.description}</Text>
+              <Text style={styles.propertyDescription}><TranslatedText text={property.description}/></Text>
             </View>
           ))}
         </View>
 
         <View style={styles.recommendationsSection}>
-          <Text style={styles.sectionTitle}>Recommendations</Text>
+          <Text style={styles.sectionTitle}><TranslatedText text="Recommendations"/></Text>
           <View style={styles.recommendationCard}>
-            <Text style={styles.recommendationTitle}>Add Organic Matter</Text>
+            <Text style={styles.recommendationTitle}><TranslatedText text="Add Organic Matter"/></Text>
             <Text style={styles.recommendationText}>
-              Incorporate compost or well-rotted manure to improve water retention while maintaining good drainage.
+              <TranslatedText text="Incorporate compost or well-rotted manure to improve water retention while maintaining good drainage."/>
             </Text>
           </View>
           <View style={styles.recommendationCard}>
-            <Text style={styles.recommendationTitle}>Mulch Regularly</Text>
+            <Text style={styles.recommendationTitle}><TranslatedText text="Mulch Regularly"/></Text>
             <Text style={styles.recommendationText}>
-              Apply 2-3 inches of organic mulch to maintain soil moisture and prevent erosion.
+              <TranslatedText text="Apply 2-3 inches of organic mulch to maintain soil moisture and prevent erosion."/>
             </Text>
           </View>
           <View style={styles.recommendationCard}>
-            <Text style={styles.recommendationTitle}>Avoid Compaction</Text>
+            <Text style={styles.recommendationTitle}><TranslatedText text="Avoid Compaction"/></Text>
             <Text style={styles.recommendationText}>
-              Limit traffic on soil and avoid working it when wet to maintain good structure.
+              <TranslatedText text="Limit traffic on soil and avoid working it when wet to maintain good structure."/>
             </Text>
           </View>
         </View>

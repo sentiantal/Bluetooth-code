@@ -27,6 +27,7 @@ import * as Print from "expo-print"
 import * as Sharing from "expo-sharing"
 import * as FileSystem from "expo-file-system"
 import { useSoilData } from "../../context/SoilDataContext"
+import { TranslatedText } from "@/components/TranslatedText"
 
 const { width } = Dimensions.get("window")
 
@@ -293,7 +294,7 @@ export default function ReportsScreen() {
       <View style={styles.summaryCard}>
         <View style={styles.summaryHeader}>
           <FileBarChart size={20} color="#1976D2" />
-          <Text style={styles.summaryTitle}>Current Soil Data Summary</Text>
+          <Text style={styles.summaryTitle}><TranslatedText text="Current Soil Data Summary"/></Text>
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.summaryScroll}>
@@ -304,16 +305,16 @@ export default function ReportsScreen() {
             return (
               <View key={index} style={styles.summaryItem}>
                 <View style={styles.summaryItemHeader}>
-                  <Text style={styles.summaryItemLabel}>{item.label}</Text>
+                  <Text style={styles.summaryItemLabel}><TranslatedText text={item.label}/></Text>
                   <View style={[styles.statusBadge, { backgroundColor: isInRange ? "#4CAF50" : "#F44336" }]}>
                     {isInRange ? <CheckCircle size={12} color="white" /> : <AlertTriangle size={12} color="white" />}
                   </View>
                 </View>
                 <Text style={styles.summaryItemValue}>
-                  {item.value} {item.unit}
+                  {item.value}<TranslatedText text={item.unit}/>
                 </Text>
                 <Text style={styles.summaryItemRange}>
-                  Range: {item.goodRangeMin} - {item.goodRangeMax} {item.unit}
+                  <TranslatedText text="Range: "/>{item.goodRangeMin} - {item.goodRangeMax} <TranslatedText text={item.unit}/>
                 </Text>
               </View>
             )
@@ -327,12 +328,12 @@ export default function ReportsScreen() {
             disabled={isGeneratingPDF}
           >
             {isGeneratingPDF ? <ActivityIndicator size="small" color="white" /> : <Download size={16} color="white" />}
-            <Text style={styles.primaryButtonText}>{isGeneratingPDF ? "Generating..." : "Generate PDF"}</Text>
+            <Text style={styles.primaryButtonText}>{isGeneratingPDF ? <TranslatedText text="Downloading..." /> : <TranslatedText text="Download PDF" />}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.actionButton, styles.secondaryButton]} onPress={printReport}>
             <Printer size={16} color="#1976D2" />
-            <Text style={styles.secondaryButtonText}>Print</Text>
+            <Text style={styles.secondaryButtonText}><TranslatedText text="Print"/></Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -346,26 +347,26 @@ export default function ReportsScreen() {
       </View>
       <View style={styles.reportContent}>
         <View style={styles.reportHeader}>
-          <Text style={styles.reportTitle}>{item.title}</Text>
+          <Text style={styles.reportTitle}><TranslatedText text={item.title}/></Text>
           <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>{item.status}</Text>
+            <Text style={styles.statusText}><TranslatedText text={item.status}/></Text>
           </View>
         </View>
         <View style={styles.reportDateContainer}>
           <Calendar size={14} color="#757575" />
-          <Text style={styles.reportDate}>{formatDate(item.date)}</Text>
+          <Text style={styles.reportDate}><TranslatedText text={formatDate(item.date)}/></Text>
         </View>
-        <Text style={styles.reportSummary}>{item.summary}</Text>
+        <Text style={styles.reportSummary}><TranslatedText text={item.summary}/></Text>
         <View style={styles.reportFooter}>
-          <Text style={styles.reportSize}>{item.size}</Text>
+          <Text style={styles.reportSize}><TranslatedText text={item.size}/></Text>
           <View style={styles.reportActions}>
             <TouchableOpacity style={styles.downloadButton}>
               <Download size={14} color="#1976D2" />
-              <Text style={styles.downloadText}>Download</Text>
+              <Text style={styles.downloadText}><TranslatedText text="Download"/></Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.shareButton} onPress={() => shareReport(item)}>
               <Share2 size={14} color="#1976D2" />
-              <Text style={styles.shareText}>Share</Text>
+              <Text style={styles.shareText}><TranslatedText text="Share"/></Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -377,8 +378,8 @@ export default function ReportsScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Soil Reports</Text>
-        <Text style={styles.headerSubtitle}>Analysis and recommendations</Text>
+        <Text style={styles.headerTitle}><TranslatedText text="Soil Reports"/></Text>
+        <Text style={styles.headerSubtitle}><TranslatedText text="Analysis and recommendations"/></Text>
       </View>
 
       {/* Filter Section */}
@@ -402,12 +403,12 @@ export default function ReportsScreen() {
           {isGeneratingPDF ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text style={styles.generateButtonText}>Generate New Report</Text>
+            <Text style={styles.generateButtonText}><TranslatedText text="Generate New Report"/></Text>
           )}
           <ChevronRight size={20} color="#FFFFFF" />
         </TouchableOpacity>
         {soilData.length === 0 && (
-          <Text style={styles.noDataText}>No soil data available. Please collect data first.</Text>
+          <Text style={styles.noDataText}><TranslatedText text="No soil data available. Please collect data first."/></Text>
         )}
       </View>
     </View>

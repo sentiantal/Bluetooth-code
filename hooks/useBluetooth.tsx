@@ -201,7 +201,7 @@ const useBluetooth = (): BluetoothHook => {
     }
 
     if (!bleManager) {
-      console.error('❌ Bluetooth is not available on this platform');
+      //console.error('❌ Bluetooth is not available on this platform');
       setError('Bluetooth is not available on this platform.');
       return null;
     }
@@ -217,7 +217,7 @@ const useBluetooth = (): BluetoothHook => {
       for (const service of services) {
         const characteristics = await service.characteristics();
         for (const char of characteristics) {
-          console.log('  🔗 Characteristic:', char.uuid, '| Notifiable:', char.isNotifiable);
+          //console.log('  🔗 Characteristic:', char.uuid, '| Notifiable:', char.isNotifiable);
         }
       }
 
@@ -239,7 +239,7 @@ const useBluetooth = (): BluetoothHook => {
             const parsed = parseFloat(decoded);
 
             if (!isNaN(parsed)) {
-              console.log('📥 Received value:', parsed);
+              //console.log('📥 Received value:', parsed);
               if (!isAwaitingBackend) {
                 buffer.push(parsed);
               }
@@ -249,7 +249,7 @@ const useBluetooth = (): BluetoothHook => {
                 buffer = [];
                 isAwaitingBackend = true;
                 setBleInput(valuesToSend);
-                console.log('🚀 Sending to backend:', JSON.stringify({ data: valuesToSend }));
+                //console.log('🚀 Sending to backend:', JSON.stringify({ data: valuesToSend }));
 
                 sendDataToBackendAndUpdate(valuesToSend)
                   .then(() => (isAwaitingBackend = false))
@@ -274,7 +274,7 @@ const useBluetooth = (): BluetoothHook => {
   const sendDataToBackendAndUpdate = async (valuesArray: number[]) => {
     try {
       const jsonBody = JSON.stringify({ data: valuesArray });
-      console.log('Sending to backend:', jsonBody);
+      //console.log('Sending to backend:', jsonBody);
 
       const response = await fetch('https://spectro.onrender.com/predict', {
         method: 'POST',
@@ -283,7 +283,7 @@ const useBluetooth = (): BluetoothHook => {
       });
 
       const result = await response.json();
-      console.log('Backend response:', result);
+      //console.log('Backend response:', result);
 
       if (result && result.predictions) {
         const transformed = transformBackendResponse(result);
@@ -329,7 +329,7 @@ const useBluetooth = (): BluetoothHook => {
         const parsed = parseFloat(decoded);
 
         if (!isNaN(parsed)) {
-          console.log('📥 Value from device:', parsed);
+          //console.log('📥 Value from device:', parsed);
           buffer.push(parsed);
         }
 
@@ -338,7 +338,7 @@ const useBluetooth = (): BluetoothHook => {
           buffer = [];
           isAwaitingBackend = true;
 
-          console.log('📤 Sending to backend:', valuesToSend);
+          //console.log('📤 Sending to backend:', valuesToSend);
           setBleInput(valuesToSend);
 
           try {
@@ -349,11 +349,11 @@ const useBluetooth = (): BluetoothHook => {
             });
 
             const result = await response.json();
-            console.log('📬 Backend response:', result);
+            //console.log('📬 Backend response:', result);
 
             if (result?.predictions) {
               const transformed = transformBackendResponse(result);
-              console.log('📦 Transformed predictions:', transformed);
+              //console.log('📦 Transformed predictions:', transformed);
               if (transformed.length === 20) {
                 setSoilData(transformed);
               }

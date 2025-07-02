@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { useSoilData } from '@/context/SoilDataContext';
 import { Droplets, ChevronLeft, Info } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { TranslatedText } from '@/components/TranslatedText';
 
 export default function WaterScreen() {
   const router = useRouter();
@@ -64,8 +65,8 @@ export default function WaterScreen() {
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <Droplets size={32} color="#FFFFFF" />
-          <Text style={styles.headerTitle}>Soil Moisture</Text>
-          <Text style={styles.headerSubtitle}>Water content and retention</Text>
+          <Text style={styles.headerTitle}><TranslatedText text="Soil Moisture"/></Text>
+          <Text style={styles.headerSubtitle}><TranslatedText text="Water content and retention"/></Text>
         </View>
       </View>
 
@@ -75,20 +76,20 @@ export default function WaterScreen() {
             <Info size={20} color="#1976D2" />
           </View>
           <Text style={styles.infoText}>
-            Soil moisture affects plant growth, nutrient availability, and microbial activity. 
-            Maintaining proper moisture levels is essential for healthy plant development.
+            <TranslatedText text="Soil moisture affects plant growth, nutrient availability, and microbial activity. 
+            Maintaining proper moisture levels is essential for healthy plant development."/>
           </Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Current Moisture Level</Text>
+          <Text style={styles.sectionTitle}><TranslatedText text="Current Moisture Level"/></Text>
           <View style={styles.moistureCard}>
             <View style={styles.moistureIndicatorContainer}>
               <Text style={[styles.moistureValue, { color: moistureStatus.color }]}>
-                {waterDetails.currentMoisture}%
+               {waterDetails.currentMoisture}%
               </Text>
               <Text style={[styles.moistureStatus, { color: moistureStatus.color }]}>
-                {moistureStatus.status}
+                <TranslatedText text={moistureStatus.status}/>
               </Text>
             </View>
             <View style={styles.moistureGauge}>
@@ -124,40 +125,40 @@ export default function WaterScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Water Capacity Details</Text>
+          <Text style={styles.sectionTitle}><TranslatedText text="Water Capacity Details"/></Text>
           <View style={styles.capacityCard}>
             <View style={styles.capacityRow}>
-              <Text style={styles.capacityLabel}>Field Capacity:</Text>
+              <Text style={styles.capacityLabel}><TranslatedText text="Field Capacity:"/></Text>
               <Text style={styles.capacityValue}>{waterDetails.fieldCapacity}%</Text>
             </View>
             <Text style={styles.capacityDescription}>
-              Maximum amount of water soil can hold after gravity drainage
+              <TranslatedText text="Maximum amount of water soil can hold after gravity drainage"/>
             </Text>
             
             <View style={styles.divider} />
             
             <View style={styles.capacityRow}>
-              <Text style={styles.capacityLabel}>Wilting Point:</Text>
+              <Text style={styles.capacityLabel}><TranslatedText text="Wilting Point:"/></Text>
               <Text style={styles.capacityValue}>{waterDetails.wiltingPoint}%</Text>
             </View>
             <Text style={styles.capacityDescription}>
-              Minimum moisture level at which plants can extract water
+              <TranslatedText text="Minimum moisture level at which plants can extract water"/>
             </Text>
             
             <View style={styles.divider} />
             
             <View style={styles.capacityRow}>
-              <Text style={styles.capacityLabel}>Available Water:</Text>
+              <Text style={styles.capacityLabel}><TranslatedText text="Available Water:"/></Text>
               <Text style={styles.capacityValue}>{waterDetails.availableWaterCapacity.toFixed(3)}%</Text>
             </View>
             <Text style={styles.capacityDescription}>
-              Water content available for plant use
+              <TranslatedText text="Water content available for plant use"/>
             </Text>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Recent Moisture Trend</Text>
+          <Text style={styles.sectionTitle}><TranslatedText text="Recent Moisture Trend"/></Text>
           <View style={styles.trendCard}>
             <View style={styles.trendChart}>
               {waterDetails.history.map((item, index) => {
@@ -174,7 +175,7 @@ export default function WaterScreen() {
                   <View key={index} style={styles.trendBar}>
                     <View style={styles.trendBarLabels}>
                       <Text style={styles.trendDate}>
-                        {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        <TranslatedText text={new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}/>
                       </Text>
                       <Text style={styles.trendValue}>{item.value.toFixed(3)}%</Text>
                     </View>
@@ -197,25 +198,25 @@ export default function WaterScreen() {
             <View style={styles.trendLegend}>
               <View style={styles.trendLegendItem}>
                 <View style={[styles.legendColor, { backgroundColor: '#2E7D32' }]} />
-                <Text style={styles.legendText}>Optimal</Text>
+                <Text style={styles.legendText}><TranslatedText text="Optimal"/></Text>
               </View>
               <View style={styles.trendLegendItem}>
                 <View style={[styles.legendColor, { backgroundColor: '#F57C00' }]} />
-                <Text style={styles.legendText}>High</Text>
+                <Text style={styles.legendText}><TranslatedText text="High"/></Text>
               </View>
               <View style={styles.trendLegendItem}>
                 <View style={[styles.legendColor, { backgroundColor: '#D32F2F' }]} />
-                <Text style={styles.legendText}>Low</Text>
+                <Text style={styles.legendText}><TranslatedText text="Low"/></Text>
               </View>
             </View>
           </View>
         </View>
 
         <View style={styles.recommendationsSection}>
-          <Text style={styles.sectionTitle}>Recommendations</Text>
+          <Text style={styles.sectionTitle}><TranslatedText text="Recommendations"/></Text>
           {waterDetails.recommendations.map((recommendation, index) => (
             <View key={index} style={styles.recommendationCard}>
-              <Text style={styles.recommendationText}>{recommendation}</Text>
+              <Text style={styles.recommendationText}><TranslatedText text={recommendation}/></Text>
             </View>
           ))}
         </View>
