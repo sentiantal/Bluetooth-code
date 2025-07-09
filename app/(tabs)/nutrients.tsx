@@ -27,6 +27,10 @@ export default function NutrientsScreen() {
     if (value > max) return moderate; // can also return 'high' if you want
     return good;
   };
+  const convertKgHaToMgSample = (kgHa: number): number => {
+  return parseFloat((kgHa * 0.064).toFixed(2));
+};
+
   const nutrientDetails = {
     ph: {
       value: parseFloat(soilData.find(d => d.label === 'pH Level')?.value ?? '0'),
@@ -41,31 +45,31 @@ export default function NutrientsScreen() {
       {
         name: 'Nitrogen (N)',
         value: parseFloat(soilData.find(d => d.label === 'Total Nitrogen (N)')?.value ?? '0'),
-        optimal: '140 - 280 kg/ha',
+        optimal: '8.96 - 17.92 mg/sample',
         status: getStatus(
           parseFloat(soilData.find(d => d.label === 'Total Nitrogen (N)')?.value ?? '0'),
-          140,
-          280
+          8.96,
+          17.92
         ),
       },
       {
         name: 'Phosphorus (P)',
         value: parseFloat(soilData.find(d => d.label === 'Phosphorus Content')?.value ?? '0'),
-        optimal: '7 - 14 kg/ha',
+        optimal: '0.45 - 0.90 mg/sample',
         status: getStatus(
           parseFloat(soilData.find(d => d.label === 'Phosphorus Content')?.value ?? '0'),
-          7,
-          14
+          0.45,
+          0.90
         ),
       },
       {
         name: 'Potassium (K)',
         value: parseFloat(soilData.find(d => d.label === 'Potassium Content')?.value ?? '0'),
-        optimal: '300 - 450 kg/ha',
+        optimal: '19.20 - 28.80 mg/sample',
         status: getStatus(
           parseFloat(soilData.find(d => d.label === 'Potassium Content')?.value ?? '0'),
-          300,
-          450
+          19.20,
+          28.80
         ),
       },
     ],
@@ -200,7 +204,7 @@ export default function NutrientsScreen() {
                 <View style={styles.valueContainer}>
                   <Text style={styles.valueLabel}><TranslatedText text="Current"/></Text>
                   <Text style={[styles.value, { color: getStatusColor(nutrient.status) }]}>
-                    {nutrient.value}
+                   {convertKgHaToMgSample(nutrient.value)}
                   </Text>
                 </View>
                 <View style={styles.divider} />

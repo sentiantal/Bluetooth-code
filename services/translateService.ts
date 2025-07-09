@@ -1,6 +1,6 @@
 export const translateText = async (text: string, targetLang: string) => {
     try {
-        const response = await fetch("http://192.168.137.213:5000/api/translate", {
+        const response = await fetch("https://mxmgyp3unr.ap-south-1.awsapprunner.com/api/translate", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

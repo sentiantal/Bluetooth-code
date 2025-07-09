@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState, useEffect } from "react"
 import {
@@ -36,6 +34,11 @@ const HomeScreen: React.FC = () => {
   const [deviceLoading, setDeviceLoading] = useState<boolean>(false)
   const [deviceError, setDeviceError] = useState<string | null>(null)
   const router = useRouter()
+  const convertKgHaToMgSample = (kgHa: number): string => {
+    const mgSample = kgHa * 0.064;
+    return `${mgSample.toFixed(2)} mg/sample`;
+  };
+
 
   useEffect(() => {
     if (isScanning) {
@@ -153,17 +156,39 @@ const HomeScreen: React.FC = () => {
             <Text style={styles.deviceText}><TranslatedText text="Waiting for predictions..." /></Text>
           </View>
         ) : (
-          soilData.map((item, index) => (
-            <View key={index} style={styles.resultCard}>
-              <Text style={styles.label}><TranslatedText text={item.label} /></Text>
-              <Text style={styles.value}>
-                {item.value}<TranslatedText text={item.unit} />
-              </Text>
-              <Text style={styles.range}>
-                <TranslatedText text="Recommended: " />{item.goodRangeMin} – {item.goodRangeMax}
-              </Text>
-            </View>
-          ))
+          soilData.map((item, index) => {
+            const isMacro = item.label.includes("Nitrogen") || item.label.includes("Phosphorus") || item.label.includes("Potassium");
+
+            return (
+              <View key={index} style={styles.resultCard}>
+                <Text style={styles.label}><TranslatedText text={item.label} /></Text>
+
+                <Text style={styles.value}>
+                  {isMacro && (
+                    <>
+                      {`${(Number(item.value) * 0.064).toFixed(2)} `}
+                      <TranslatedText text="mg/sample" />
+                      {"\n"}
+                    </>
+                  )}
+                  {item.value} <TranslatedText text={item.unit} />
+                </Text>
+
+                <Text style={styles.range}>
+                  <TranslatedText text="Recommended: " />
+                  {"\n"}
+                  {isMacro && (
+                    <>
+                      {convertKgHaToMgSample(Number(item.goodRangeMin)).split(" ")[0]} – {convertKgHaToMgSample(Number(item.goodRangeMax)).split(" ")[0]}{" "}
+                      <TranslatedText text="mg/sample" />
+                      {"\n"}
+                    </>
+                  )}
+                  {item.goodRangeMin} – {item.goodRangeMax} <TranslatedText text="kg/ha" />
+                </Text>
+              </View>
+            );
+          })
         )}
       </ScrollView>
     )
