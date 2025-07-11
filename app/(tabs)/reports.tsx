@@ -48,7 +48,7 @@ export default function ReportsScreen() {
     const valueText = await translateText("Value", language)
     const optimalRangeText = await translateText("Optimal Range", language)
     const statusText = await translateText("Status", language)
-    const goodStatus = await translateText("Good", language)
+    const goodStatus = await translateText("Is Sufficient", language)
     const needsAttentionStatus = await translateText("Needs Attention", language)
 
     let soilDataHTML = ""

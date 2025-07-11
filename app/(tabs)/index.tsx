@@ -174,6 +174,7 @@ const HomeScreen: React.FC = () => {
                   {item.value} <TranslatedText text={item.unit} />
                 </Text>
 
+{/* 
                 <Text style={styles.range}>
                   <TranslatedText text="Recommended: " />
                   {"\n"}
@@ -186,6 +187,8 @@ const HomeScreen: React.FC = () => {
                   )}
                   {item.goodRangeMin} – {item.goodRangeMax} <TranslatedText text="kg/ha" />
                 </Text>
+                */
+}
               </View>
             );
           })
@@ -371,7 +374,7 @@ const styles = StyleSheet.create({
   deviceDetailsContainer: {
     padding: 20,
     backgroundColor: "#f5f5f5",
-    paddingTop: 60,
+    paddingTop: 10,
   },
   deviceDetailsHeader: {
     flexDirection: "row",
