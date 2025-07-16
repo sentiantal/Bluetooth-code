@@ -28,14 +28,22 @@ export default function ReportsScreen() {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
 
   const getBase64Logo = async () => {
-    const asset = Asset.Asset.fromModule(require("@/assets/images/logo.jpg"))
-    await asset.downloadAsync()
-    const fileUri = asset.localUri || asset.uri
-    const base64 = await FileSystem.readAsStringAsync(fileUri!, {
-      encoding: FileSystem.EncodingType.Base64,
-    })
-    return `data:image/jpeg;base64,${base64}`
+  const asset = Asset.Asset.fromModule(require("@/assets/images/logo.jpg"))
+  await asset.downloadAsync()
+
+  const fileUri = asset.localUri ?? asset.uri
+
+  if (!fileUri) {
+    throw new Error("Logo image not found")
   }
+
+  const base64 = await FileSystem.readAsStringAsync(fileUri, {
+    encoding: FileSystem.EncodingType.Base64,
+  })
+
+  return `data:image/jpeg;base64,${base64}`
+}
+
 
   const generateHTMLReport = async (logoBase64: string) => {
     const currentDate = new Date().toLocaleDateString()
