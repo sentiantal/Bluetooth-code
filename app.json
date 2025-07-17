@@ -31,7 +31,10 @@
         "BLUETOOTH_ADVERTISE",
         "INTERNET",
         "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
+        "WRITE_EXTERNAL_STORAGE",
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.BLUETOOTH_CONNECT"
       ],
       "package": "com.smurari.Agrow"
     },
@@ -55,7 +58,10 @@
         "react-native-ble-plx",
         {
           "isBackgroundEnabled": true,
-          "modes": ["peripheral", "central"],
+          "modes": [
+            "peripheral",
+            "central"
+          ],
           "bluetoothAlwaysPermission": "Allow $(PRODUCT_NAME) to connect to bluetooth devices"
         }
       ]
@@ -66,7 +72,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "92a4eeda-ec32-4980-b1b1-642eb750e18d"
+        "projectId": "3b9bdae7-a500-45c7-b60f-69222607c0ef"
       }
     }
   }

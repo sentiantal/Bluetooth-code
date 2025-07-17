@@ -77,17 +77,17 @@ export default function NutrientsScreen() {
       {
         name: 'Zinc (Zn)',
         value: parseFloat(soilData.find(d => d.label === 'Zinc (Zn)')?.value ?? '0'),
-        optimal: '0.5 - 3.0 ppm',
+        optimal: '0.6 - 1.2 mg/kg',
         status: getStatus(
           parseFloat(soilData.find(d => d.label === 'Zinc (Zn)')?.value ?? '0'),
-          0.5,
-          3.0
+          0.6,
+          1.2
         ),
       },
       {
         name: 'Iron (Fe)',
         value: parseFloat(soilData.find(d => d.label === 'Iron (Fe)')?.value ?? '0'),
-        optimal: '4.5 - 10 ppm',
+        optimal: '4.5 - 10 mg/kg',
         status: getStatus(
           parseFloat(soilData.find(d => d.label === 'Iron (Fe)')?.value ?? '0'),
           4.5,
@@ -97,7 +97,7 @@ export default function NutrientsScreen() {
       {
         name: 'Boron (B)',
         value: parseFloat(soilData.find(d => d.label === 'Boron (B)')?.value ?? '0'),
-        optimal: '0.5 - 1.5 ppm',
+        optimal: '0.5 - 1.5 mg/kg',
         status: getStatus(
           parseFloat(soilData.find(d => d.label === 'Boron (B)')?.value ?? '0'),
           0.5,

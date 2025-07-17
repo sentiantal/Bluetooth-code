@@ -128,12 +128,12 @@ const useBluetooth = (): BluetoothHook => {
 
   const startScan = useCallback(async () => {
     if (isScanning) return;
-    
+
     if (!bleManager) {
       setError('Bluetooth is not available on this platform.');
       return;
     }
-    
+
     if (!(await requestBluetoothPermissions())) {
       setError('Bluetooth permissions not granted.');
       return;
@@ -379,26 +379,34 @@ const useBluetooth = (): BluetoothHook => {
     if (missing.length) return [];
 
     return [
-      { label: 'Potassium Content', value: pred.k_ext.toFixed(2), unit: 'kg/ha', goodRangeMin: 300, goodRangeMax: 450 },
-      { label: 'Total Nitrogen (N)', value: pred.n_tot.toFixed(2), unit: 'kg/ha', goodRangeMin: 140, goodRangeMax: 280 },
-      { label: 'Organic Carbon (OC)', value: pred.oc_usda.toFixed(2), unit: '%', goodRangeMin: 0.21, goodRangeMax: 1.0 },
-      { label: 'Phosphorus Content', value: pred.p_ext.toFixed(2), unit: 'kg/ha', goodRangeMin: 7, goodRangeMax: 14 },
-      { label: 'pH Level', value: pred.ph_h2o.toFixed(2), unit: '', goodRangeMin: 7.5, goodRangeMax: 9.0 },
-      { label: 'Boron (B)', value: pred.b_ext.toFixed(2), unit: 'ppm', goodRangeMin: 0.5, goodRangeMax: 1.5 },
-      { label: 'Calcium (Ca)', value: pred.ca_ext.toFixed(2), unit: 'ppm', goodRangeMin: 1000, goodRangeMax: 3000 },
-      { label: 'Copper (Cu)', value: pred.cu_ext.toFixed(2), unit: 'ppm', goodRangeMin: 0.2, goodRangeMax: 2.0 },
-      { label: 'Electrical Conductivity (EC)', value: pred.ec_usda.toFixed(2), unit: 'dS/m', goodRangeMin: 0, goodRangeMax: 1.5 },
-      { label: 'Iron (Fe)', value: pred.fe_ext.toFixed(2), unit: 'ppm', goodRangeMin: 4.5, goodRangeMax: 10 },
-      { label: 'Magnesium (Mg)', value: pred.mg_ext.toFixed(2), unit: 'ppm', goodRangeMin: 200, goodRangeMax: 600 },
-      { label: 'Sulfur (S)', value: pred.s_ext.toFixed(2), unit: 'ppm', goodRangeMin: 10, goodRangeMax: 30 },
-      { label: 'Zinc (Zn)', value: pred.zn_ext.toFixed(2), unit: 'ppm', goodRangeMin: 0.5, goodRangeMax: 3.0 },
-      { label: 'Total Clay', value: pred.clay_tot.toFixed(2), unit: '%', goodRangeMin: 15, goodRangeMax: 35 },
+      // Macronutrients
+      { label: 'Potassium Content', value: pred.k_ext.toFixed(2), unit: 'kg/ha', goodRangeMin: 280, goodRangeMax: 560 },  // Optimal for most crops
+      { label: 'Total Nitrogen (N)', value: pred.n_tot.toFixed(2), unit: 'kg/ha', goodRangeMin: 180, goodRangeMax: 280 }, // Above 300 = surplus
+      { label: 'Organic Carbon (OC)', value: pred.oc_usda.toFixed(2), unit: '%', goodRangeMin: 0.5, goodRangeMax: 0.75 }, // 0.5–0.75 = ideal
+      { label: 'Phosphorus Content', value: pred.p_ext.toFixed(2), unit: 'kg/ha', goodRangeMin: 11, goodRangeMax: 25 },   // Medium to sufficient
+      { label: 'pH Level', value: pred.ph_h2o.toFixed(2), unit: '', goodRangeMin: 6.5, goodRangeMax: 7.5 },               // Ideal for most crops
+
+      { label: 'Boron (B)', value: pred.b_ext.toFixed(2), unit: 'mg/kg', goodRangeMin: 0.5, goodRangeMax: 1.0 },
+      { label: 'Calcium (Ca)', value: pred.ca_ext.toFixed(2), unit: 'mg/kg', goodRangeMin: 1500, goodRangeMax: 5000 },
+      { label: 'Copper (Cu)', value: pred.cu_ext.toFixed(2), unit: 'mg/kg', goodRangeMin: 0.2, goodRangeMax: 0.8 },
+      { label: 'Electrical Conductivity (EC)', value: pred.ec_usda.toFixed(2), unit: 'dS/m', goodRangeMin: 0.1, goodRangeMax: 1.0 }, // >1 = saline
+      { label: 'Iron (Fe)', value: pred.fe_ext.toFixed(2), unit: 'mg/kg', goodRangeMin: 4.5, goodRangeMax: 10 },
+      { label: 'Magnesium (Mg)', value: pred.mg_ext.toFixed(2), unit: 'mg/kg', goodRangeMin: 150, goodRangeMax: 400 },
+      { label: 'Sulfur (S)', value: pred.s_ext.toFixed(2), unit: 'mg/kg', goodRangeMin: 10, goodRangeMax: 30 },
+      { label: 'Zinc (Zn)', value: pred.zn_ext.toFixed(2), unit: 'mg/kg', goodRangeMin: 0.6, goodRangeMax: 1.2 },
+
+      // Texture Parameters
+      { label: 'Total Clay', value: pred.clay_tot.toFixed(2), unit: '%', goodRangeMin: 20, goodRangeMax: 35 },  // Ideal loam to clay loam
       { label: 'Total Sand', value: pred.sand_tot.toFixed(2), unit: '%', goodRangeMin: 40, goodRangeMax: 60 },
       { label: 'Total Silt', value: pred.silt_tot.toFixed(2), unit: '%', goodRangeMin: 10, goodRangeMax: 30 },
-      { label: 'Water Retention 10 kPa', value: pred.wr_10kPa.toFixed(2), unit: '%', goodRangeMin: 10, goodRangeMax: 40 },
-      { label: 'Water Retention 1500 kPa', value: pred.wr_1500kPa.toFixed(2), unit: '%', goodRangeMin: 5, goodRangeMax: 20 },
-      { label: 'Water Retention 33 kPa', value: pred.wr_33kPa.toFixed(2), unit: '%', goodRangeMin: 10, goodRangeMax: 30 },
-      { label: 'Soil Moisture', value: pred.soil_moisture.toFixed(2), unit: '%', goodRangeMin: 10, goodRangeMax: 30 },
+
+      // Water Retention
+      { label: 'Water Retention 10 kPa', value: pred.wr_10kPa.toFixed(2), unit: 'g/kg', goodRangeMin: 15, goodRangeMax: 45 },
+      { label: 'Water Retention 1500 kPa', value: pred.wr_1500kPa.toFixed(2), unit: 'g/kg', goodRangeMin: 5, goodRangeMax: 20 },
+      { label: 'Water Retention 33 kPa', value: pred.wr_33kPa.toFixed(2), unit: 'g/kg', goodRangeMin: 10, goodRangeMax: 35 },
+
+      // Moisture
+      { label: 'Soil Moisture', value: pred.soil_moisture.toFixed(2), unit: '%', goodRangeMin: 15, goodRangeMax: 35 },
     ];
   };
 

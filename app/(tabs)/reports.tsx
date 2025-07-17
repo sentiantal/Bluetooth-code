@@ -19,6 +19,9 @@ import { useSoilData } from "../../context/SoilDataContext"
 import { useLanguage } from "@/context/LanguageContext"
 import { translateText } from "@/services/translateService"
 import { TranslatedText } from "@/components/TranslatedText"
+import logoAsset from "@/assets/images/logo.jpg";
+import * as Sharing from "expo-sharing";
+import { Platform } from "react-native";
 
 const { width } = Dimensions.get("window")
 
@@ -27,23 +30,24 @@ export default function ReportsScreen() {
   const { language } = useLanguage()
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
 
-  const getBase64Logo = async () => {
-  const asset = Asset.Asset.fromModule(require("@/assets/images/logo.jpg"))
-  await asset.downloadAsync()
+ const getBase64Logo = async (): Promise<string> => {
+  const asset = Asset.Asset.fromModule(logoAsset);
+  await asset.downloadAsync();
 
-  const fileUri = asset.localUri ?? asset.uri
+  let fileUri = asset.localUri ?? asset.uri;
 
-  if (!fileUri) {
-    throw new Error("Logo image not found")
+  if (!fileUri.startsWith("file://")) {
+    const tempPath = FileSystem.cacheDirectory + "logo.jpg";
+    await FileSystem.copyAsync({ from: fileUri, to: tempPath });
+    fileUri = tempPath;
   }
 
   const base64 = await FileSystem.readAsStringAsync(fileUri, {
     encoding: FileSystem.EncodingType.Base64,
-  })
+  });
 
-  return `data:image/jpeg;base64,${base64}`
-}
-
+  return `data:image/jpeg;base64,${base64}`;
+};
 
   const generateHTMLReport = async (logoBase64: string) => {
     const currentDate = new Date().toLocaleDateString()
@@ -166,6 +170,35 @@ export default function ReportsScreen() {
     </html>
   `
   }
+  const sharePDFReport = async () => {
+  if (soilData.length === 0) {
+    Alert.alert("No Data", "No soil data available to share");
+    return;
+  }
+
+  try {
+    setIsGeneratingPDF(true);
+
+    const base64Logo = await getBase64Logo();
+    const htmlContent = await generateHTMLReport(base64Logo);
+
+    // Generate a local PDF file
+    const { uri } = await Print.printToFileAsync({ html: htmlContent });
+
+
+    if (!(await Sharing.isAvailableAsync())) {
+      Alert.alert("Not Supported", "Sharing is not available on this device");
+      return;
+    }
+
+    await Sharing.shareAsync(uri);
+  } catch (error) {
+    console.error("Error sharing PDF:", error);
+    Alert.alert("Error", "Failed to share report");
+  } finally {
+    setIsGeneratingPDF(false);
+  }
+};
 
   const printReport = async () => {
     if (soilData.length === 0) {
@@ -195,6 +228,7 @@ export default function ReportsScreen() {
 
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {soilData.length > 0 && (
+          <>
           <TouchableOpacity
             style={styles.generateButton}
             onPress={printReport}
@@ -209,6 +243,24 @@ export default function ReportsScreen() {
               </>
             )}
           </TouchableOpacity>
+          <TouchableOpacity
+  style={[styles.generateButton, { marginTop: 12, backgroundColor: "#2E7D32" }]}
+  onPress={sharePDFReport}
+  disabled={isGeneratingPDF}
+>
+  {isGeneratingPDF ? (
+    <ActivityIndicator size="small" color="white" />
+  ) : (
+    <>
+      <Download size={16} color="white" />
+      <Text style={styles.generateButtonText}><TranslatedText text="Share PDF" /></Text>
+    </>
+  )}
+</TouchableOpacity>
+
+          </>
+          
+          
         )}
         {soilData.length === 0 && (
           <Text style={styles.noDataText}><TranslatedText text="No soil data available. Please collect data first." /></Text>
