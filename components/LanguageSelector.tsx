@@ -1,6 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useLanguage } from "@/context/LanguageContext";
+import React from "react";
 
 const LanguageSelector = () => {
     const { language, setLanguage } = useLanguage();

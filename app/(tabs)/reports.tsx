@@ -22,6 +22,7 @@ import { TranslatedText } from "@/components/TranslatedText"
 import logoAsset from "@/assets/images/logo.jpg";
 import * as Sharing from "expo-sharing";
 import { Platform } from "react-native";
+import React from "react"
 
 const { width } = Dimensions.get("window")
 

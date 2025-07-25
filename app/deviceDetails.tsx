@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import React from "react"
 import { useEffect, useState, useCallback } from "react"
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, Platform, TouchableOpacity } from "react-native"
 import { BleManager, type Device } from "react-native-ble-plx"
@@ -105,12 +105,12 @@ const DeviceDetails: React.FC = () => {
       ) : (
         soilData.map((item, index) => (
           <View key={index} style={styles.resultCard}>
-            <Text style={styles.label}>{item.label}"</Text>
+            <Text style={styles.label}>{item.label}</Text>
             <Text style={styles.value}>
               {item.value} {item.unit}
             </Text>
             <Text style={styles.range}>
-              Recommended: {item.goodRangeMin} – {item.goodRangeMax}"
+              Recommended: {item.goodRangeMin} – {item.goodRangeMax}
             </Text>
           </View>
         ))

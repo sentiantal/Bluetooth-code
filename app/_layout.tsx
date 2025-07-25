@@ -4,6 +4,7 @@ import { SoilDataProvider } from '@/context/SoilDataContext';
 import { StatusBar } from 'expo-status-bar';
 import { LanguageProvider } from '@/context/LanguageContext';
 import LanguageSelector from '@/components/LanguageSelector';
+import React from 'react';
 
 export default function RootLayout() {
   return (

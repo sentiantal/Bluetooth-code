@@ -6,6 +6,7 @@ import { View } from 'react-native';
 import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
 import { useTranslatedText } from '@/hooks/useTranslatedText';
 import { useMemo } from 'react';
+import React from 'react';
 
 function DynamicTabs() {
   const home = useTranslatedText('Home');

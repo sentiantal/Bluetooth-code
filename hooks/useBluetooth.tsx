@@ -406,7 +406,7 @@ const useBluetooth = (): BluetoothHook => {
       { label: 'Water Retention 33 kPa', value: pred.wr_33kPa.toFixed(2), unit: 'g/kg', goodRangeMin: 10, goodRangeMax: 35 },
 
       // Moisture
-      { label: 'Soil Moisture', value: pred.soil_moisture.toFixed(2), unit: '%', goodRangeMin: 15, goodRangeMax: 35 },
+      { label: 'Soil Moisture', value: Math.abs(pred.soil_moisture).toFixed(2), unit: '%', goodRangeMin: 15, goodRangeMax: 35 },
     ];
   };
 
